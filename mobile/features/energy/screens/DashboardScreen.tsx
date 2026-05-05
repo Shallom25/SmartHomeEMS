@@ -35,7 +35,7 @@ export function DashboardScreen() {
               fontWeight: THEME.fontWeight.heavy,
             }}
           >
-            Xolarie EMS
+            Smart Home EMS
           </Text>
 
           <Text style={{ color: THEME.colors.textMuted, marginTop: 6 }}>
