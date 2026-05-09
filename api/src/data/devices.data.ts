@@ -9,6 +9,7 @@ export const devices: Device[] = [
     voltage: 220,
     current: 0.34,
     power: 75,
+    activeHours: 14,
   },
   {
     id: "bulb",
@@ -18,6 +19,7 @@ export const devices: Device[] = [
     voltage: 220,
     current: 0.08,
     power: 18,
+    activeHours: 14,
   },
   {
     id: "tv",
@@ -27,6 +29,7 @@ export const devices: Device[] = [
     voltage: 0,
     current: 0,
     power: 0,
+    activeHours: 14,
   },
   {
     id: "fridge",
@@ -36,6 +39,7 @@ export const devices: Device[] = [
     voltage: 220,
     current: 0.82,
     power: 180,
+    activeHours: 14,
   },
   {
     id: "ac",
@@ -45,5 +49,6 @@ export const devices: Device[] = [
     voltage: 220,
     current: 5.45,
     power: 1200,
+    activeHours: 14,
   },
 ];

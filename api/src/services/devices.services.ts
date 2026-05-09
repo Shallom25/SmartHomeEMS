@@ -26,7 +26,7 @@ const getDailyUsage = (devices: Device[], deviceId: string): number => {
 const getDaillyCost = (devices: Device[], deviceId: string, tarrif : number): number => {
   const device = devices.find((d) => d.id === deviceId);
   if (!device) return 0;
-  return calculateCost(device.power, tarrif);
+  return calculateCost(calculateDailyKwh(device.power), tarrif);
 };
 
 const getDevicePower = (devices: Device[], deviceId: string): number => {
@@ -34,3 +34,5 @@ const getDevicePower = (devices: Device[], deviceId: string): number => {
   if (!device) return 0;
   return calculatePower(device.voltage, device.current)
 };
+
+export { getActiveDevices, getConnectedDevices, getDaillyCost, getDailyUsage, getDeviceDetails, getDevicePower, getInactiveDevices }

@@ -1,47 +1,91 @@
 import type { Device } from "../types/device.types.js";
+
 import {
   calculateCurrentHourKwh,
   calculateKwh,
   calculateDailyCost,
+  getEnergyStatus,
 } from "../utils/calculations.js";
 
-const currentHour = new Date().getHours(); // 0–23
-// const tarrif = 225;
+const TARIFF = 250;
+const LIMIT = 2000;
 
-const getHourlyUsage = (devices: Device[], hour: number): number => {
+export type EnergyAnalytics = {
+  totalPower: number;
+
+  totalDeviceLoadKw: number;
+
+  totalCurrent: number;
+
+  hourlyUsage: number;
+
+  estimatedCost: number;
+
+  totalDailyUsage: number;
+
+  peakPower: Device | null;
+
+  status: string;
+};
+
+export const getEnergyAnalytics = (
+  devices: Device[],
+  tariff: number = TARIFF,
+): EnergyAnalytics => {
   let totalPower = 0;
+
+  let totalCurrent = 0;
+
+  let totalDailyUsage = 0;
+
+  let totalActiveHours = 0;
+
+  let peakPower: Device | null = null;
+
   for (const device of devices) {
+    const deviceUsage = calculateKwh(device.power, device.activeHours);
+
+    totalActiveHours +=device.activeHours;
+
+    totalDailyUsage += deviceUsage;
+    // total power
     totalPower += device.power;
-  }
-  return calculateCurrentHourKwh(totalPower, hour);
-};
 
-const getDeviceConsumption = (
-  devices: Device[],
-  deviceId: string,
-  activeHour: number,
-): number => {
-  const device = devices.find((d) => d.id === deviceId);
-  if (!device) return 0;
-  return calculateCurrentHourKwh(device.power, activeHour);
-};
+    // total current
+    totalCurrent += device.current;
 
-const getPeakPower = (devices: { name: string; power: number }[]) => {
-  return devices.reduce((peak, device) => {
-    return device.power > peak.power ? device : peak;
-  }, devices[0]);
-};
-
-const getEstimateCost = (
-  devices: Device[],
-  hour: number,
-  tariff: number,
-): number => {
-  // let estimateCost = 0;
-  let totalPower = 0;
-  for (const device of devices) {
-    totalPower += calculateKwh(device.power, hour);
+    // peak power
+    if (!peakPower || device.power > peakPower.power) {
+      peakPower = device;
+    }
   }
 
-  return calculateDailyCost(totalPower, tariff);
+  // total load in kW
+  const totalDeviceLoadKw = totalPower / 1000;
+
+  // derived calculations
+  const hourlyUsage = calculateCurrentHourKwh(totalPower, totalActiveHours);
+
+
+  const estimatedCost = calculateDailyCost(totalDailyUsage, tariff);
+
+  const status = getEnergyStatus(totalPower, LIMIT);
+
+  return {
+    totalPower,
+
+    totalDailyUsage,
+
+    totalDeviceLoadKw,
+
+    totalCurrent,
+
+    hourlyUsage,
+
+    estimatedCost,
+
+    peakPower,
+
+    status,
+  };
 };

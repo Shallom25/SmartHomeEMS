@@ -10,6 +10,7 @@ export function calculateCost(kwh: number, tariff: number) {
   return kwh * tariff;
 }
 
+
 export function calculateDailyCost(kwh: number, tariff: number) {
   return kwh * 24 * tariff;
 }

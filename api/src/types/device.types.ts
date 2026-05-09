@@ -8,4 +8,5 @@ export interface Device {
   voltage: number;
   current: number;
   power: number;
+  activeHours: number;
 }
