@@ -5,7 +5,7 @@ import { devices } from "../data/devices.data.js";
 
 
 const getEnergyData = (req : Request, res : Response) => {
-    res.json(getEnergyAnalytics(devices, ))
+    res.json(getEnergyAnalytics(devices ))
 }
 
 export { getEnergyData }

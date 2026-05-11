@@ -1,4 +1,5 @@
 import type { Device } from "../types/device.types.js";
+import { settings } from "../data/settings.data.js";
 
 import {
   calculateCurrentHourKwh,
@@ -25,12 +26,13 @@ export type EnergyAnalytics = {
 
   peakPower: Device | null;
 
+  highestDevice: string;
+
   status: string;
 };
 
 export const getEnergyAnalytics = (
-  devices: Device[],
-  tariff: number = TARIFF,
+  devices: Device[]
 ): EnergyAnalytics => {
   let totalPower = 0;
 
@@ -42,10 +44,12 @@ export const getEnergyAnalytics = (
 
   let peakPower: Device | null = null;
 
+  let highestDevice: string = "";
+
   for (const device of devices) {
     const deviceUsage = calculateKwh(device.power, device.activeHours);
 
-    totalActiveHours +=device.activeHours;
+    totalActiveHours += device.activeHours;
 
     totalDailyUsage += deviceUsage;
     // total power
@@ -57,6 +61,7 @@ export const getEnergyAnalytics = (
     // peak power
     if (!peakPower || device.power > peakPower.power) {
       peakPower = device;
+      highestDevice = peakPower.currentType;
     }
   }
 
@@ -66,10 +71,9 @@ export const getEnergyAnalytics = (
   // derived calculations
   const hourlyUsage = calculateCurrentHourKwh(totalPower, totalActiveHours);
 
+  const estimatedCost = calculateDailyCost(totalDailyUsage, settings.tariff);
 
-  const estimatedCost = calculateDailyCost(totalDailyUsage, tariff);
-
-  const status = getEnergyStatus(totalPower, LIMIT);
+  const status = getEnergyStatus(totalPower, settings.powerLimit);
 
   return {
     totalPower,
@@ -81,6 +85,8 @@ export const getEnergyAnalytics = (
     totalCurrent,
 
     hourlyUsage,
+
+    highestDevice,
 
     estimatedCost,
 

@@ -1,13 +1,13 @@
 import type { Alert } from "../types/alert.types.js";
 import type { Device } from "../types/device.types.js";
 import type { Energy } from "../types/energy.types.js";
+import { settings } from "../data/settings.data.js";
 
 type AlertLevel = "info" | "warning" | "danger";
 
-const POWER_LIMIT = 2000;
-const COST_LIMIT = 3000;
-const MIN_VOLTAGE = 200;
-const MAX_VOLTAGE = 240;
+
+let Critical = 0;
+let warning = 0;
 
 function createAlert(
   title: string,
@@ -32,7 +32,7 @@ export function generateAlerts(
   const alerts: Alert[] = [];
 
   // 1. System power alert
-  if (energy.power >= POWER_LIMIT) {
+  if (energy.power >= settings.powerLimit) {
     alerts.push(
       createAlert(
         "High Power Usage",
@@ -41,10 +41,11 @@ export function generateAlerts(
         "danger"
       )
     );
+    Critical += 1;
   }
 
   // 2. Cost alert
-  if (energy.cost >= COST_LIMIT) {
+  if (energy.cost >= settings.costLimit) {
     alerts.push(
       createAlert(
         "Cost Threshold Warning",
@@ -53,10 +54,11 @@ export function generateAlerts(
         "warning"
       )
     );
+    warning += 1;
   }
 
   // 3. Voltage safety
-  if (energy.voltage < MIN_VOLTAGE || energy.voltage > MAX_VOLTAGE) {
+  if (energy.voltage < settings.minVoltage || energy.voltage > settings.maxVoltage) {
     alerts.push(
       createAlert(
         "Voltage Issue",
@@ -65,6 +67,7 @@ export function generateAlerts(
         "danger"
       )
     );
+    Critical += 1;
   } else {
     alerts.push(
       createAlert(

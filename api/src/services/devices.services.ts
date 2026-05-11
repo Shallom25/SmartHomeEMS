@@ -35,4 +35,11 @@ const getDevicePower = (devices: Device[], deviceId: string): number => {
   return calculatePower(device.voltage, device.current)
 };
 
-export { getActiveDevices, getConnectedDevices, getDaillyCost, getDailyUsage, getDeviceDetails, getDevicePower, getInactiveDevices }
+const getDevicesConsumption = (devices : Device[]) => {
+  return devices.map((device) =>({
+    deviceName : device.name,
+    dailyKwh : calculateDailyKwh(device.power)
+  }))
+}
+
+export { getActiveDevices, getConnectedDevices, getDaillyCost, getDailyUsage, getDeviceDetails, getDevicePower, getInactiveDevices, getDevicesConsumption }
