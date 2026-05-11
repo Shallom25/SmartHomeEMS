@@ -1,19 +1,23 @@
 import type { Request, Response } from "express";
-import { getActiveDevices, getInactiveDevices, getDeviceDetails } from "../services/devices.services.js";
+import { getActiveDevices, getInactiveDevices, getDeviceDetails, getDevicesConsumption } from "../services/devices.services.js";
 import { devices } from "../data/devices.data.js";
 import { calculateCost, calculateDailyKwh } from "../utils/calculations.js";
 import { settings } from "../data/settings.data.js";
 
 
-const tarrif = 225;
 
 
 const connectedDevices= (req : Request, res: Response)=>{
     res.json(getActiveDevices(devices))
 }
 
+
 const disconnectedDevices = ( req : Request, res : Response) => {
     res.json(getInactiveDevices(devices))
+}
+
+const devicesConsumption = (req : Request, res : Response) => {
+    res.json(getDevicesConsumption(devices))
 }
 
 const deviceDetails = ( req : Request<{deviceId: string}>, res : Response) => {
@@ -37,3 +41,4 @@ const deviceDetails = ( req : Request<{deviceId: string}>, res : Response) => {
   });
    
 }
+export { connectedDevices,  disconnectedDevices, deviceDetails, devicesConsumption }
