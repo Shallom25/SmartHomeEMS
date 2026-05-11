@@ -5,7 +5,7 @@ import { connectedDevices, deviceDetails, disconnectedDevices, devicesConsumptio
 const router = Router();
 
 router.get("/connected-devices", connectedDevices);
-router.get("/device-details/:id", deviceDetails);
+router.get("/device-details/:deviceId", deviceDetails);
 router.get("/disconnected-devices", disconnectedDevices);
 router.get("/device-consumption", devicesConsumption )
 
