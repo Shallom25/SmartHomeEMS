@@ -1,4 +1,4 @@
-import { devices } from "../data/devices.data.js";
+
 import type { Device } from "../types/device.types.js";
 import { calculateDailyKwh, calculateCost, calculatePower } from "../utils/calculations.js";
 

@@ -6,6 +6,14 @@ import {
 } from "../utils/calculations.js";
 import type { Energy } from "../types/energy.types.js";
 
+
+import { SourceReading } from "../types/energy.types.js";
+
+export let sourceValue : SourceReading = {
+  sourceVoltage : 220,
+  sourceCurrent : 6.94
+}
+
 const TARIFF = 250;
 const LIMIT = 2000;
 

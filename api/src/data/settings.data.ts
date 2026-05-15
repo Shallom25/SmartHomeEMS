@@ -8,7 +8,7 @@ export let settings: Settings = {
   tariff: 250,
 
   powerLimit: 2000,
-
+  
   minVoltage: 200,
   maxVoltage: 240,
 };

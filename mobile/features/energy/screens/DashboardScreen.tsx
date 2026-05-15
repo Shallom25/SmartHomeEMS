@@ -15,6 +15,11 @@ import { useEnergy } from "../hooks/useEnergy";
 export function DashboardScreen() {
   const { energy, refreshing, refresh } = useEnergy();
 
+  if (!energy) {
+  return <Text>Loading energy data...</Text>;
+}
+  
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: THEME.colors.background }}
@@ -58,19 +63,19 @@ export function DashboardScreen() {
       <View style={{ marginTop: 24 }}>
         <EnergyCard
           label="Current Power"
-          value={formatPower(energy.power)}
+          value={formatPower(energy.totalPower)}
           subtitle="Live simulated household load"
         />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
-        <StatCard label="Voltage" value={formatVoltage(energy.voltage)} />
-        <StatCard label="Current" value={formatCurrent(energy.current)} />
+        <StatCard label="Voltage" value={formatVoltage(energy.sourceReading.sourceVoltage)} />
+        <StatCard label="Current" value={formatCurrent(energy.sourceReading.sourceCurrent)} />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-        <StatCard label="Daily Usage" value={formatKwh(energy.dailyKwh)} />
-        <StatCard label="Cost" value={formatCurrency(energy.cost)} />
+        <StatCard label="Daily Usage" value={formatKwh(energy.totalDailyUsage)} />
+        <StatCard label="Cost" value={formatCurrency(energy.estimatedCost)} />
       </View>
 
       <Card style={{ marginTop: 24 }}>

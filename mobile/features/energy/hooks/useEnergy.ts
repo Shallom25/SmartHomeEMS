@@ -1,45 +1,71 @@
-import { useCallback, useState } from "react";
-import {
-  calculateDailyKwh,
-  getEnergyStatus,
-} from "@/utils/calculations";
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+// import { calculateDailyKwh, getEnergyStatus } from "@/utils/calculations";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const MOCK_ENERGY = {
-  voltage: 220,
-  current: 2.5,
-  tariff: 250,
-  limitWatts: 2000,
-};
-
-export function useEnergy() {
+const useEnergy = () => {
   const [refreshing, setRefreshing] = useState(false);
+const [energy, setEnergy] = useState({
+  sourceReading: {
+    "sourceVoltage": 0,
+    "sourceCurrent": 0
+  },
+  totalPower: 0,
+  totalDailyUsage: 0,
+  totalDeviceLoadKw: 0,
+  totalCurrent: 0,
+  hourlyUsage: 0,
+  highestDevice: "",
+  estimatedCost: 0,
+  status: "Loading",
+  peakPower: {
+    id: "",
+    name: "",
+    room: "",
+    status: "",
+    currentType: "",
+    voltage: 0,
+    current: 0,
+    power: 0,
+    activeHours: 0,
+  },
+});
 
-  const power = MOCK_ENERGY.voltage * MOCK_ENERGY.current;
-  const dailyKwh = calculateDailyKwh(power);
-  const cost = dailyKwh * MOCK_ENERGY.tariff;
-  const status = getEnergyStatus(power, MOCK_ENERGY.limitWatts);
+  const loadEnergy = useCallback(async () => {
+  try {
+    if (!API_URL) {
+      console.log("NO API URL FOUND");
+      return;
+    }
 
-  const energy = {
-    power,
-    voltage: MOCK_ENERGY.voltage,
-    current: MOCK_ENERGY.current,
-    dailyKwh,
-    cost,
-    status,
-  };
+    const response = await axios.get(API_URL);
+
+    console.log("FULL RESPONSE:", response);
+    console.log("DATA:", response.data);
+
+    setEnergy(response.data);
+  } catch (error) {
+    console.log("API ERROR:", error);
+  }
+  }, []);
+
+  useEffect(() => {
+    loadEnergy();
+  }, [loadEnergy]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
 
-    // Later: call Express API here
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 800);
-  }, []);
+    await loadEnergy();
+
+    setRefreshing(false);
+  }, [loadEnergy]);
 
   return {
     energy,
     refreshing,
     refresh,
   };
-}
+};
+
+export { useEnergy };

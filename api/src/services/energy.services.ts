@@ -1,5 +1,8 @@
 import type { Device } from "../types/device.types.js";
 import { settings } from "../data/settings.data.js";
+import { EnergyAnalytics } from "../types/energy.types.js";
+import { sourceValue } from "../data/energy.data.js";
+import { VoltageStatus } from "../types/energy.types.js";
 
 import {
   calculateCurrentHourKwh,
@@ -8,32 +11,27 @@ import {
   getEnergyStatus,
 } from "../utils/calculations.js";
 
-const TARIFF = 250;
-const LIMIT = 2000;
+const getVoltageStatus = (): VoltageStatus => {
+  if (sourceValue.sourceVoltage < settings.minVoltage) return "Low Voltage";
+  if (sourceValue.sourceVoltage > settings.maxVoltage) return "High Voltage";
 
-export type EnergyAnalytics = {
-  totalPower: number;
-
-  totalDeviceLoadKw: number;
-
-  totalCurrent: number;
-
-  hourlyUsage: number;
-
-  estimatedCost: number;
-
-  totalDailyUsage: number;
-
-  peakPower: Device | null;
-
-  highestDevice: string;
-
-  status: string;
+  return "Normal Voltage";
 };
 
+
+
+
+
+
+
+
 export const getEnergyAnalytics = (
-  devices: Device[]
+  devices: Device[],
 ): EnergyAnalytics => {
+
+  
+
+  
   let totalPower = 0;
 
   let totalCurrent = 0;
@@ -75,7 +73,14 @@ export const getEnergyAnalytics = (
 
   const status = getEnergyStatus(totalPower, settings.powerLimit);
 
+
+  
+  
+
   return {
+
+    sourceReading : sourceValue,
+
     totalPower,
 
     totalDailyUsage,
@@ -91,6 +96,8 @@ export const getEnergyAnalytics = (
     estimatedCost,
 
     peakPower,
+
+    voltageStatus : getVoltageStatus(),
 
     status,
   };
