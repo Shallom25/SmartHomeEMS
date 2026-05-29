@@ -12,15 +12,14 @@ import {
   formatVoltage,
 } from "@/utils/format";
 import { calculateDailyKwh, calculateCost } from "@/utils/calculations";
-import { useDevices } from "../hooks/useDevices";
+import { useDevicesDetails } from "../hooks/useDevices";
 
 export function DeviceDetailsScreen() {
-  const { deviceId } = useLocalSearchParams<{ deviceId: string }>();
-  const { devices } = useDevices();
+  const { deviceDetails } = useDevicesDetails();
 
-  const device = devices.find((item) => item.id === deviceId);
+  const device = deviceDetails;
 
-  if (!device) {
+  if (!device?.id) {
     return (
       <View
         style={{

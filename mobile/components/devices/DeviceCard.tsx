@@ -6,7 +6,7 @@ import { THEME } from "@/constants/theme";
 type DeviceCardProps = {
   name: string;
   room: string;
-  status: "ON" | "OFF";
+  status: string;
   power: string;
   voltage: string;
   current: string;

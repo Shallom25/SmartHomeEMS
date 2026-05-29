@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { EnergyCard } from "@/components/energy/EnergyCard";
 import { DeviceCard } from "@/components/devices/DeviceCard";
 import { THEME } from "@/constants/theme";
@@ -7,7 +7,10 @@ import { formatCurrent, formatPower, formatVoltage } from "@/utils/format";
 import { useDevices } from "../hooks/useDevices";
 
 export function DevicesScreen() {
-  const { devices, activeDevices, totalDevices, totalPower } = useDevices();
+  const { devices, activeDevices, totalDevices, totalPower,refresh, refreshing } = useDevices();
+
+
+  
 
   return (
     <ScrollView
@@ -16,6 +19,9 @@ export function DevicesScreen() {
         padding: THEME.layout.containerPadding,
         paddingBottom: 100,
       }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+            }
     >
       <Text
         style={{
