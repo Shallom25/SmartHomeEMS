@@ -1,9 +1,11 @@
-import { ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { EnergyCard } from "@/components/energy/EnergyCard";
 import { Card } from "@/components/ui/Card";
 import { ConsumptionChart } from "@/components/energy/ComsumptionChart";
 import { THEME } from "@/constants/theme";
 import { formatCurrency, formatKwh, formatPower } from "@/utils/format";
+import { useEnergy } from "../hooks/useEnergy";
+import { useDevicesConsuption } from "@/features/devices/hooks/useDevices";
 
 const hourlyUsage = [
   { label: "6AM", value: 0.7 },
@@ -14,19 +16,30 @@ const hourlyUsage = [
   { label: "9PM", value: 2.1 },
 ];
 
-const deviceUsage = [
-  { label: "AC", value: 28.8 },
-  { label: "Fridge", value: 4.32 },
-  { label: "Fan", value: 1.8 },
-  { label: "Bulb", value: 0.43 },
-  { label: "TV", value: 0 },
-];
 
 export function AnalyticsScreen() {
-  const totalKwh = deviceUsage.reduce((sum, item) => sum + item.value, 0);
-  const tariff = 250;
-  const estimatedCost = totalKwh * tariff;
-  const peakDevice = deviceUsage[0];
+
+  const { energy,  refreshing : refreshingEnergy, refresh : refreshEnergy } = useEnergy();
+  const { devicesConsumption, refresh : refreshDevicesConsuption, refreshing : refreshingDevicesConsuption } = useDevicesConsuption()
+
+  
+
+
+  const totalKwh = energy.totalDailyUsage;
+  const estimatedCost = energy.estimatedCost;
+  const peakDevice = energy.peakPower;
+
+  const refresh = async () => {
+  await Promise.all([
+    refreshEnergy(),
+    refreshDevicesConsuption(),
+  ]);
+};
+
+const refreshing =
+  refreshingEnergy || refreshingDevicesConsuption;
+
+
 
   return (
     <ScrollView
@@ -35,6 +48,9 @@ export function AnalyticsScreen() {
         padding: THEME.layout.containerPadding,
         paddingBottom: 100,
       }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+            }
     >
       <Text
         style={{
@@ -60,11 +76,11 @@ export function AnalyticsScreen() {
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
         <MetricCard label="Estimated Cost" value={formatCurrency(estimatedCost)} />
-        <MetricCard label="Peak Load" value={peakDevice.label} />
+        <MetricCard label="Peak Load" value={peakDevice.name} />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-        <MetricCard label="Highest Device" value={peakDevice.label} />
+        <MetricCard label="Highest Device" value={peakDevice.name} />
         <MetricCard label="Peak Power" value={formatPower(1200)} />
       </View>
 
@@ -73,7 +89,7 @@ export function AnalyticsScreen() {
       </View>
 
       <View style={{ marginTop: 18 }}>
-        <ConsumptionChart title="Device Consumption" data={deviceUsage} />
+        <ConsumptionChart title="Device Consumption" data={devicesConsumption} />
       </View>
 
       <Card style={{ marginTop: 24 }}>

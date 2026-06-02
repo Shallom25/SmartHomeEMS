@@ -14,6 +14,15 @@ export interface SourceReading {
   sourceCurrent: number;
 }
 
+export type HourlyUsagePoint = {
+  time: string;
+  value: number;
+};
+
+export type HourlyUsage = HourlyUsagePoint[];
+
+
+
 export type VoltageStatus =
   | "Low Voltage"
   | "Normal Voltage"
@@ -30,7 +39,7 @@ export type EnergyAnalytics = {
 
   totalCurrent: number;
 
-  hourlyUsage: number;
+  hourlyUsage: HourlyUsage;
 
   estimatedCost: number;
 

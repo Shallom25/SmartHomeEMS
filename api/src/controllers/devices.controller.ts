@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getActiveDevices, getInactiveDevices, getDeviceDetails, getDevicesConsumption } from "../services/devices.services.js";
+import { getActiveDevices, getInactiveDevices, getDeviceDetails, getDevicesConsumption, getHourlyConsumption } from "../services/devices.services.js";
 import { devices } from "../data/devices.data.js";
 import { calculateCost, calculateDailyKwh } from "../utils/calculations.js";
 import { settings } from "../data/settings.data.js";
@@ -18,6 +18,10 @@ const disconnectedDevices = ( req : Request, res : Response) => {
 
 const devicesConsumption = (req : Request, res : Response) => {
     res.json(getDevicesConsumption(devices))
+}
+
+const hourlyConsumption = (re : Request, res : Response) => {
+    res.json(getHourlyConsumption(devices))
 }
 
 const deviceDetails = ( req : Request<{deviceId: string}>, res : Response) => {
@@ -41,4 +45,4 @@ const deviceDetails = ( req : Request<{deviceId: string}>, res : Response) => {
   });
    
 }
-export { connectedDevices,  disconnectedDevices, deviceDetails, devicesConsumption }
+export { connectedDevices,  disconnectedDevices, deviceDetails, devicesConsumption, hourlyConsumption }

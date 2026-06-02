@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { connectedDevices, deviceDetails, disconnectedDevices, devicesConsumption } from "../controllers/devices.controller.js";
+import { connectedDevices, deviceDetails, disconnectedDevices, devicesConsumption, hourlyConsumption } from "../controllers/devices.controller.js";
 
 const router = Router();
 

@@ -82,41 +82,81 @@ const useDevicesDetails = () => {
 
   const params = useLocalSearchParams();
 
-const deviceId = Array.isArray(params.deviceId)
-  ? params.deviceId[0]
-  : params.deviceId;
+  const deviceId = Array.isArray(params.deviceId)
+    ? params.deviceId[0]
+    : params.deviceId;
 
-const loadDeviceDetails = useCallback(async () => {
-  try {
-    if (!API_URL || !deviceId) {
-      return;
+  const loadDeviceDetails = useCallback(async () => {
+    try {
+      if (!API_URL || !deviceId) {
+        return;
+      }
+
+      console.log("deviceId:", deviceId);
+
+      const response = await axios.get(
+        `${API_URL}/devices/device-details/${deviceId}`,
+      );
+
+      setDeviceDetails(response.data);
+    } catch (error) {
+      console.error("error", error);
     }
-
-    console.log("deviceId:", deviceId);
-
-    const response = await axios.get(
-      `${API_URL}/devices/device-details/${deviceId}`
-    );
-
-    setDeviceDetails(response.data);
-  } catch (error) {
-    console.error("error", error);
-  }
-}, [deviceId]);
+  }, [deviceId]);
 
   useEffect(() => {
     loadDeviceDetails();
   }, [loadDeviceDetails]);
 
   const refresh = useCallback(async () => {
-    setRefreshing(true)
-    loadDeviceDetails()
-    setRefreshing(false)
-  },[loadDeviceDetails])
+    setRefreshing(true);
+    loadDeviceDetails();
+    setRefreshing(false);
+  }, [loadDeviceDetails]);
   return {
     deviceDetails,
+    refresh,
+    refreshing,
+  };
+};
+
+const useDevicesConsuption = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [devicesConsumption, setDevicesConsuption] = useState([
+    {
+      deviceName: "",
+      dailyKwh: 0,
+    },
+  ]);
+
+  const loadDeviceConsumtion = useCallback(async () => {
+    try {
+      if (!API_URL) {
+        return;
+      }
+
+      const response = await axios.get(`${API_URL}/devices/device-consumption`);
+      setDevicesConsuption(response.data)
+    } catch (error) {
+      console.error("error", error);
+    }
+  },[]);
+
+    useEffect(() => {
+    loadDeviceConsumtion();
+  }, [loadDeviceConsumtion]);
+
+  const refresh = useCallback(async () => {
+    setRefreshing(true)
+    loadDeviceConsumtion();
+    setRefreshing(false)
+  },[loadDeviceConsumtion])
+
+  return {
+    devicesConsumption,
+    refreshing,
     refresh
   };
 };
 
-export { useDevices, useDevicesDetails };
+export { useDevices, useDevicesDetails, useDevicesConsuption };
