@@ -6,15 +6,8 @@ import { THEME } from "@/constants/theme";
 import { formatCurrency, formatKwh, formatPower } from "@/utils/format";
 import { useEnergy } from "../hooks/useEnergy";
 import { useDevicesConsuption } from "@/features/devices/hooks/useDevices";
+import { HourlyConsumptionChart } from "@/components/energy/HourlyConsumptionChart";
 
-const hourlyUsage = [
-  { label: "6AM", value: 0.7 },
-  { label: "9AM", value: 1.1 },
-  { label: "12PM", value: 1.8 },
-  { label: "3PM", value: 2.4 },
-  { label: "6PM", value: 3.2 },
-  { label: "9PM", value: 2.1 },
-];
 
 
 export function AnalyticsScreen() {
@@ -85,7 +78,7 @@ const refreshing =
       </View>
 
       <View style={{ marginTop: 24 }}>
-        <ConsumptionChart title="Hourly Usage" data={hourlyUsage} />
+        <HourlyConsumptionChart title="Hourly Usage" data={energy.hourlyUsage} />
       </View>
 
       <View style={{ marginTop: 18 }}>

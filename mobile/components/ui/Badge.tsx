@@ -3,10 +3,10 @@ import { THEME } from "@/constants/theme";
 
 type BadgeProps = {
   label: string;
-  variant?: "success" | "warning" | "danger" | "info" | "neutral";
+  variant: "success" | "warning" | "danger" | "info" | "neutral";
 };
 
-export function Badge({ label, variant = "neutral" }: BadgeProps) {
+export function Badge({ label, variant }: BadgeProps) {
   const styles = {
     success: [THEME.colors.successBg, THEME.colors.success],
     warning: [THEME.colors.warningBg, THEME.colors.warning],
@@ -15,7 +15,13 @@ export function Badge({ label, variant = "neutral" }: BadgeProps) {
     neutral: [THEME.colors.surfaceSoft, THEME.colors.textSecondary],
   } as const;
 
-  const [bg, color] = styles[variant];
+  console.log("variant", variant);
+  console.log("styles[variant]", styles[variant]);
+
+  const badgeStyle =
+    variant && styles[variant] ? styles[variant] : styles.neutral;
+
+  const [bg, color] = badgeStyle;
 
   return (
     <View

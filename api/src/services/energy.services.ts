@@ -17,8 +17,6 @@ const getVoltageStatus = (): VoltageStatus => {
   return "Normal Voltage";
 };
 
-
-
 const slots = [
   { label: "6AM", start: 6 },
   { label: "9AM", start: 9 },
@@ -42,7 +40,6 @@ const getDayKey = () => new Date().toISOString().split("T")[0];
 let lastUpdate = Date.now();
 let lastResetDate = getDayKey();
 
-
 const getCurrentSlot = () => {
   const hour = new Date().getHours();
 
@@ -55,58 +52,43 @@ const getCurrentSlot = () => {
   return "6AM";
 };
 
+const computeHourlyUsage = (devices: Device[]) => {
+  // RESET DAILY
+  if (getDayKey() !== lastResetDate) {
+    Object.keys(slotEnergy).forEach((k) => (slotEnergy[k] = 0));
+    lastResetDate = getDayKey();
+    lastUpdate = Date.now();
+  }
 
+  const nowMs = Date.now();
 
-  const computeHourlyUsage = (devices: Device[]) => {
-  
-    // RESET DAILY
-    if (getDayKey() !== lastResetDate) {
-      Object.keys(slotEnergy).forEach((k) => (slotEnergy[k] = 0));
-      lastResetDate = getDayKey();
-      lastUpdate = Date.now();
-    }
-  
-    const nowMs = Date.now();
-  
-    // SAFE DELTA (prevents spikes)
-    const rawDelta = (nowMs - lastUpdate) / (1000 * 60 * 60);
-    const deltaHours = Math.min(rawDelta, 0.25);
-  
-    lastUpdate = nowMs;
-  
-    const currentSlot = getCurrentSlot();
-    const currentSlotIndex = slots.findIndex(s => s.label === currentSlot);
-  
-    const totalPower = devices.reduce((sum, d) => {
-      if (d.status !== "ON") return sum;
-      return sum + d.power;
-    }, 0);
-  
-    const kwh = (totalPower * deltaHours) / 1000;
-  
-    for (let i = 0; i <= currentSlotIndex; i++) {
-      slotEnergy[slots[i].label] += kwh / (currentSlotIndex + 1);
-    }
-  
-    return Object.entries(slotEnergy).map(([time, value]) => ({
-      time,
-      value: Number(value.toFixed(2)),
-    }));
-  };
+  // SAFE DELTA (prevents spikes)
+  const rawDelta = (nowMs - lastUpdate) / (1000 * 60 * 60);
+  const deltaHours = Math.min(rawDelta, 0.25);
 
+  lastUpdate = nowMs;
 
+  const currentSlot = getCurrentSlot();
+  const currentSlotIndex = slots.findIndex((s) => s.label === currentSlot);
 
+  const totalPower = devices.reduce((sum, d) => {
+    if (d.status !== "ON") return sum;
+    return sum + d.power;
+  }, 0);
 
+  const kwh = (totalPower * deltaHours) / 1000;
 
+  for (let i = 0; i <= currentSlotIndex; i++) {
+    slotEnergy[slots[i].label] += kwh / (currentSlotIndex + 1);
+  }
 
+  return Object.entries(slotEnergy).map(([time, value]) => ({
+    time,
+    value: Number(value.toFixed(2)),
+  }));
+};
 
-export const getEnergyAnalytics = (
-  devices: Device[],
-): EnergyAnalytics => {
-
-  
-
-  
+export const getEnergyAnalytics = (devices: Device[]): EnergyAnalytics => {
   let totalPower = 0;
 
   let totalCurrent = 0;
@@ -142,19 +124,14 @@ export const getEnergyAnalytics = (
   const totalDeviceLoadKw = totalPower / 1000;
 
   // derived calculations
-  const hourlyUsage = computeHourlyUsage(devices)
+  const hourlyUsage = computeHourlyUsage(devices);
 
   const estimatedCost = calculateDailyCost(totalDailyUsage, settings.tariff);
 
   const status = getEnergyStatus(totalPower, settings.powerLimit);
 
-
-  
-  
-
   return {
-
-    sourceReading : sourceValue,
+    sourceReading: sourceValue,
 
     totalPower,
 
@@ -164,16 +141,16 @@ export const getEnergyAnalytics = (
 
     totalCurrent,
 
-    hourlyUsage,
-
     highestDevice,
 
     estimatedCost,
 
     peakPower,
 
-    voltageStatus : getVoltageStatus(),
+    voltageStatus: getVoltageStatus(),
 
     status,
+
+    hourlyUsage,
   };
 };

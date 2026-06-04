@@ -1,47 +1,19 @@
-import { ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { THEME } from "@/constants/theme";
+import { useAlerts } from "../hooks/useAlerts";
 
-type AlertLevel = "warning" | "danger" | "info";
+type AlertLevel = "warning" | "danger" | "info" | "success" | "neutral";
 
-const alerts: {
-  id: string;
-  title: string;
-  message: string;
-  device: string;
-  time: string;
-  level: AlertLevel;
-}[] = [
-  {
-    id: "1",
-    title: "High Power Usage",
-    message: "Air Conditioner is consuming above the recommended simulation limit.",
-    device: "Air Conditioner",
-    time: "2 mins ago",
-    level: "danger",
-  },
-  {
-    id: "2",
-    title: "Voltage Stable",
-    message: "System voltage is operating within the safe range.",
-    device: "Main Supply",
-    time: "8 mins ago",
-    level: "info",
-  },
-  {
-    id: "3",
-    title: "Cost Threshold Warning",
-    message: "Estimated daily energy cost is getting close to your configured limit.",
-    device: "Home EMS",
-    time: "15 mins ago",
-    level: "warning",
-  },
-];
+const getLabelForLevel = (level: AlertLevel): string => {
+  if (level === "danger") return "Critical";
+  if (level === "warning") return "Warning";
+  return level.charAt(0).toUpperCase() + level.slice(1);
+};
 
 export function AlertsScreen() {
-  const criticalCount = alerts.filter((alert) => alert.level === "danger").length;
-  const warningCount = alerts.filter((alert) => alert.level === "warning").length;
+  const { alerts, refresh, refreshing } = useAlerts();
 
   return (
     <ScrollView
@@ -50,6 +22,9 @@ export function AlertsScreen() {
         padding: THEME.layout.containerPadding,
         paddingBottom: 100,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+      }
     >
       <Text
         style={{
@@ -66,8 +41,16 @@ export function AlertsScreen() {
       </Text>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 24 }}>
-        <SummaryCard label="Critical" value={String(criticalCount)} variant="danger" />
-        <SummaryCard label="Warnings" value={String(warningCount)} variant="warning" />
+        <SummaryCard
+          label="Critical"
+          value={String(alerts.summary.critical)}
+          variant="danger"
+        />
+        <SummaryCard
+          label="Warnings"
+          value={String(alerts.summary.warnings)}
+          variant="warning"
+        />
       </View>
 
       <View style={{ marginTop: 24 }}>
@@ -81,7 +64,7 @@ export function AlertsScreen() {
           Recent Alerts
         </Text>
 
-        {alerts.map((alert) => (
+        {alerts.alerts.map((alert) => (
           <Card key={alert.id} style={{ marginTop: 14 }}>
             <View
               style={{
@@ -102,13 +85,13 @@ export function AlertsScreen() {
                 </Text>
 
                 <Text style={{ color: THEME.colors.textMuted, marginTop: 4 }}>
-                  {alert.device} · {alert.time}
+                  {alert.device} · {alert.createdAt}
                 </Text>
               </View>
 
               <Badge
-                label={alert.level === "danger" ? "Critical" : alert.level}
-                variant={alert.level}
+                label={getLabelForLevel(alert.level as AlertLevel)}
+                variant={alert.level as AlertLevel}
               />
             </View>
 

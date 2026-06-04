@@ -39,8 +39,6 @@ export type EnergyAnalytics = {
 
   totalCurrent: number;
 
-  hourlyUsage: HourlyUsage;
-
   estimatedCost: number;
 
   totalDailyUsage: number;
@@ -50,4 +48,6 @@ export type EnergyAnalytics = {
   highestDevice: string;
 
   status: string;
+
+    hourlyUsage: HourlyUsage;
 };

@@ -1,3 +1,3 @@
-import { AlertsScreen } from "@/features/energy/screens/AlertsScreen";
+import { AlertsScreen } from "@/features/alerts/screens/AlertsScreen";
 
 export default AlertsScreen;

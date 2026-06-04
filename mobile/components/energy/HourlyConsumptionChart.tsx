@@ -2,8 +2,8 @@ import { Text, View } from "react-native";
 import { THEME } from "@/constants/theme";
 
 type ChartPoint = {
-  deviceName: string;
-  dailyKwh: number;
+  time: string;
+  value: number;
 };
 
 type ConsumptionChartProps = {
@@ -11,8 +11,8 @@ type ConsumptionChartProps = {
   data: ChartPoint[];
 };
 
-export function ConsumptionChart({ title, data }: ConsumptionChartProps) {
-  const maxValue = Math.max(...data.map((item) => item.dailyKwh), 1);
+export function HourlyConsumptionChart({ title, data }: ConsumptionChartProps) {
+  const maxValue = Math.max(...data.map((item) => item.value), 1);
 
   return (
     <View
@@ -36,10 +36,10 @@ export function ConsumptionChart({ title, data }: ConsumptionChartProps) {
 
       <View style={{ marginTop: 18, gap: 12 }}>
         {data.map((item) => {
-          const width = `${(item.dailyKwh / maxValue).toFixed(1)}%`;
+          const width = `${(item.value / maxValue).toFixed(1)}%` as `${string}%`;
 
           return (
-            <View key={item.deviceName}>
+            <View key={item.time}>
               <View
                 style={{
                   flexDirection: "row",
@@ -48,11 +48,11 @@ export function ConsumptionChart({ title, data }: ConsumptionChartProps) {
                 }}
               >
                 <Text style={{ color: THEME.colors.textSecondary }}>
-                  {item.deviceName}
+                  {item.time}
                 </Text>
 
                 <Text style={{ color: THEME.colors.textPrimary, fontWeight: "700" }}>
-                  {item.dailyKwh} kWh
+                  {item.value} kWh
                 </Text>
               </View>
 

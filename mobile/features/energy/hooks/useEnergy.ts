@@ -14,7 +14,6 @@ const useEnergy = () => {
     totalDailyUsage: 0,
     totalDeviceLoadKw: 0,
     totalCurrent: 0,
-    hourlyUsage: 0,
     highestDevice: "",
     estimatedCost: 0,
     status: "Loading",
@@ -29,6 +28,10 @@ const useEnergy = () => {
       power: 0,
       activeHours: 0,
     },
+    hourlyUsage: [{
+      time : "6AM",
+      value : 5
+    }]
   });
 
   const loadEnergy = useCallback(async () => {

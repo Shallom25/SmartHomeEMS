@@ -25,9 +25,6 @@ const useDevices = () => {
       }
 
       const response = await axios.get(`${API_URL}/devices/connected-devices`);
-
-      console.log("Full response", response);
-      console.log("response data", response.data);
       setDevices(response.data);
     } catch (error) {
       console.error("error", error);
