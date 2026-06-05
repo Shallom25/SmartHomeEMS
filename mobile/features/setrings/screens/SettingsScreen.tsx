@@ -1,16 +1,24 @@
-import { ScrollView, Switch, Text, TextInput, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  Switch,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { THEME } from "@/constants/theme";
+import { useSettings, useUpdateSettings } from "../hooks/useSettings";
 import { useState } from "react";
 
 export function SettingsScreen() {
-  const [tariff, setTariff] = useState("250");
-  const [powerLimit, setPowerLimit] = useState("2000");
-  const [minVoltage, setMinVoltage] = useState("200");
-  const [maxVoltage, setMaxVoltage] = useState("240");
-  const [simulationMode, setSimulationMode] = useState(true);
+  const { settings, refresh, refreshing } = useSettings();
+  const [localSettings, setLocalSettings] = useState(settings);
+  const { patchSettings  } = useUpdateSettings(localSettings);
+
+  const [simulationMode, setSimulationMode] = useState(settings.simulationMode);
 
   return (
     <ScrollView
@@ -19,6 +27,9 @@ export function SettingsScreen() {
         padding: THEME.layout.containerPadding,
         paddingBottom: 100,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+      }
     >
       <Text
         style={{
@@ -74,8 +85,13 @@ export function SettingsScreen() {
 
         <InputBlock
           label="Electricity Tariff"
-          value={tariff}
-          onChangeText={setTariff}
+          value={String(localSettings.tariff)}
+          onChangeText={(text) =>
+            setLocalSettings((prev) => ({
+              ...prev,
+              tariff: Number(text),
+            }))
+          }
           suffix="₦/kWh"
         />
       </Card>
@@ -88,24 +104,39 @@ export function SettingsScreen() {
 
         <InputBlock
           label="Power Limit"
-          value={powerLimit}
-          onChangeText={setPowerLimit}
+          value={String(localSettings.powerLimit)}
+          onChangeText={(text) =>
+            setLocalSettings((prev) => ({
+              ...prev,
+              powerLimit: Number(text),
+            }))
+          }
           suffix="W"
         />
 
         <View style={{ flexDirection: "row", gap: 12 }}>
           <InputBlock
             label="Min Voltage"
-            value={minVoltage}
-            onChangeText={setMinVoltage}
+            value={String(localSettings.minVoltage)}
+            onChangeText={(text) =>
+              setLocalSettings((prev) => ({
+                ...prev,
+                minVoltage: Number(text),
+              }))
+            }
             suffix="V"
             half
           />
 
           <InputBlock
             label="Max Voltage"
-            value={maxVoltage}
-            onChangeText={setMaxVoltage}
+            value={String(localSettings.maxVoltage)}
+            onChangeText={(text) =>
+              setLocalSettings((prev) => ({
+                ...prev,
+                maxVoltage: Number(text),
+              }))
+            }
             suffix="V"
             half
           />
@@ -128,7 +159,11 @@ export function SettingsScreen() {
       </Card>
 
       <View style={{ marginTop: 24 }}>
-        <Button onPress={() => {}}>Save Settings</Button>
+        <Button
+          onPress={patchSettings}
+        >
+          Save Settings
+        </Button>
       </View>
     </ScrollView>
   );
@@ -167,7 +202,7 @@ function InputBlock({
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          keyboardType="numeric"
+          // keyboardType="numeric"
           placeholderTextColor={THEME.colors.textMuted}
           style={{
             flex: 1,

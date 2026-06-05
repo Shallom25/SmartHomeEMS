@@ -43,9 +43,6 @@ const useEnergy = () => {
 
       const response = await axios.get(`${API_URL}/energy/energy-data`);
 
-      console.log("FULL RESPONSE:", response);
-      console.log("DATA:", response.data);
-
       setEnergy(response.data);
     } catch (error) {
       console.log("API ERROR:", error);

@@ -1,3 +1,3 @@
-import { SettingsScreen } from "@/features/energy/screens/SettingsScreen";
+import { SettingsScreen } from "@/features/setrings/screens/SettingsScreen";
 
 export default SettingsScreen;
