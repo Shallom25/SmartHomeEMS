@@ -4,6 +4,7 @@ import {
   getUserById,
   getUsers,
   updateUser,
+  loginUser
 } from "../services/users.service.js";
 import { Request, Response } from "express";
 
@@ -24,6 +25,24 @@ const registerUser = async (req: Request, res: Response) => {
   });
   }
 };
+
+
+const signInUser = async ( req : Request, res : Response ) => {
+  try {
+    const { email , password } = req.body;
+
+    const user = await loginUser(email, password);
+
+    return res.status(201).json(user)
+  } catch (error) {
+          console.error("Login ERROR:", error);
+
+  return res.status(500).json({
+    error: "User creation failed",
+    details: error instanceof Error ? error.message : error,
+  });
+  }
+}
 
 const fetchUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -80,4 +99,4 @@ const updateUserData = async (req: Request<{id : string}>, res: Response) => {
 };
 
 
-export { registerUser, deleteUserData, fetchUserById, fetchUsers,  updateUserData} 
+export { registerUser, deleteUserData, fetchUserById, fetchUsers,  updateUserData, signInUser} 
