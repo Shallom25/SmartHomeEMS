@@ -19,6 +19,6 @@ app.use("/api/alerts", alertsRoutes);
 
 app.use("/api/settings", settingsRoutes);
 
-app.use("/api/users", usersRoutes);
+app.use("/api/user", usersRoutes);
 
 export default app;

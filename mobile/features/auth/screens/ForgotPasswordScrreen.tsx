@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Alert,
@@ -42,7 +42,7 @@ const ForgotPasswordScreen = () => {
   };
 
   return (
-    <SafeAreaView
+    <SafeAreaProvider
       style={{ flex: 1, backgroundColor: THEME.colors.background }}
     >
       <StatusBar barStyle="light-content" />
@@ -192,7 +192,7 @@ const ForgotPasswordScreen = () => {
           </View>
         </ScrollView>
       </LinearGradient>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

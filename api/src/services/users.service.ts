@@ -16,7 +16,23 @@ const createUser = async (
     [fullName, email, passwordHash],
   );
 
-  return result.rows[0];
+const user = result.rows[0];
+  const token = jwt.sign(
+  {
+    userId: user.id,
+    email: user.email,
+  },
+  process.env.JWT_SECRET!,
+  {
+    expiresIn: "7d",
+  }
+);
+return {
+  token,
+  id: user.id,
+  fullName: user.full_name,
+  email: user.email,
+};
 };
 
 const loginUser = async (
@@ -39,7 +55,7 @@ const loginUser = async (
   const token = jwt.sign(
     {
       userId : user.id,
-      email : user.id
+      email : user.email
     },
     process.env.JWT_SECRET!,
     {
@@ -64,6 +80,7 @@ const getUsers = async () => {
 
 const getUserById = async (id: string) => {
   const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+  console.log(result)
 
   return result.rows[0];
 };

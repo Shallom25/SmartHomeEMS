@@ -1,20 +1,21 @@
 import { useState } from "react";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-
+import { useRegister } from "../hooks/useAuth";
 import { THEME } from "@/constants/theme";
 
 const RegisterScreen = () => {
+  const { register } =  useRegister()
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,20 +33,19 @@ const RegisterScreen = () => {
 
     try {
       setLoading(true);
-
-      setTimeout(() => {
+      await register(fullName, email, password)
         setLoading(false);
         Alert.alert("Success", "Account created successfully");
         router.replace("/(tabs)");
-      }, 1200);
     } catch (error) {
       setLoading(false);
       Alert.alert("Error", "Something went wrong");
+      console.error(error)
     }
   };
 
   return (
-    <SafeAreaView
+    <SafeAreaProvider
       style={{ flex: 1, backgroundColor: THEME.colors.background }}
     >
       <StatusBar barStyle="light-content" />
@@ -205,7 +205,7 @@ const RegisterScreen = () => {
           </View>
         </ScrollView>
       </LinearGradient>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

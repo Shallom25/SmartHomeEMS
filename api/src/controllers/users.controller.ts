@@ -63,6 +63,7 @@ const fetchUserById = async (req: Request<{id : string}>, res: Response) => {
 
     return res.status(200).json(user);
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       error: "Error getting user",
     });
@@ -99,4 +100,15 @@ const updateUserData = async (req: Request<{id : string}>, res: Response) => {
 };
 
 
-export { registerUser, deleteUserData, fetchUserById, fetchUsers,  updateUserData, signInUser} 
+const getProfile = async (req: Request, res: Response) => {
+  const { userId } = req.user;
+
+  const user = await getUserById(userId);
+
+  res.json({
+    user,
+  });
+};
+
+
+export { registerUser, deleteUserData, fetchUserById, fetchUsers,  updateUserData, signInUser, getProfile} 

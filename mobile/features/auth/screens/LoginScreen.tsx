@@ -1,20 +1,21 @@
 import { useState } from "react";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-
+import { useLogin } from "../hooks/useAuth";
 import { THEME } from "@/constants/theme";
 
 const LoginScreen = () => {
+  const { login  } = useLogin()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,12 +27,9 @@ const LoginScreen = () => {
 
     try {
       setLoading(true);
-
-      setTimeout(() => {
-        setLoading(false);
+        await login(email, password)
         Alert.alert("Login Successful", "Welcome back to Smart EMS");
         router.replace("/(tabs)");
-      }, 1200);
     } catch (error) {
       setLoading(false);
       console.error("error login in",error)
@@ -40,7 +38,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView
+    <SafeAreaProvider
       style={{ flex: 1, backgroundColor: THEME.colors.background }}
     >
       <StatusBar barStyle="light-content" />
@@ -249,7 +247,7 @@ const LoginScreen = () => {
           </View>
         </ScrollView>
       </LinearGradient>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

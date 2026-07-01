@@ -1,38 +1,39 @@
 import { Stack, useRouter, useSegments } from "expo-router";
+import { useVerifyToken } from "@/features/auth/hooks/useAuth";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 
-const useAuth = () => {
-  return { user: 1 }; // replace later with real auth
-};
+
 
 export default function RootLayout() {
-  const { user } = useAuth();
+  console.log("RootLayout rendered");
+  const { user, loading } = useVerifyToken();
   const segments = useSegments();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
+
+  console.log(user)
+  console.log(loading)
+  
 
   useEffect(() => {
     setIsReady(true);
   }, []);
 
   useEffect(() => {
-    if (!isReady) return;
+  if (!isReady || loading) return;
 
-    const inAuth =
-      segments[0] === "(auth)" ||
-      segments[0] === "login" ||
-      segments[0] === "register" ||
-      segments[0] === "forgot-password";
+  const inAuth = segments[0] === "(auth)";
 
-    if (!user && !inAuth) {
-      router.replace("/(auth)/login");
-    }
+  if (!user && !inAuth) {
+    router.replace("/(auth)/login");
+  }
 
-    if (user && inAuth) {
-      router.replace("/(tabs)");
-    }
-  }, [isReady, user, segments]);
+  if (user && inAuth) {
+    router.replace("/(tabs)");
+  }
+}, [isReady, loading, user, segments, router]);
+
 
   return (
     <>
