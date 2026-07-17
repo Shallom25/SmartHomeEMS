@@ -4,7 +4,7 @@ export interface Alert {
   id: string;
   title: string;
   message: string;
-  device: string;
+  appliance: string;
   level: AlertLevel;
   createdAt: string;
 }

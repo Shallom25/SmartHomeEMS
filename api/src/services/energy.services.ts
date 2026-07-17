@@ -1,4 +1,4 @@
-import type { Device } from "../types/device.types.js";
+import type { Appliance } from "../types/appliance.types.js";
 import { settings } from "../data/settings.data.js";
 import { EnergyAnalytics } from "../types/energy.types.js";
 import { sourceValue } from "../data/energy.data.js";
@@ -52,7 +52,7 @@ const getCurrentSlot = () => {
   return "6AM";
 };
 
-const computeHourlyUsage = (devices: Device[]) => {
+const computeHourlyUsage = (appliances: Appliance[]) => {
   // RESET DAILY
   if (getDayKey() !== lastResetDate) {
     Object.keys(slotEnergy).forEach((k) => (slotEnergy[k] = 0));
@@ -71,7 +71,7 @@ const computeHourlyUsage = (devices: Device[]) => {
   const currentSlot = getCurrentSlot();
   const currentSlotIndex = slots.findIndex((s) => s.label === currentSlot);
 
-  const totalPower = devices.reduce((sum, d) => {
+  const totalPower = appliances.reduce((sum, d) => {
     if (d.status !== "ON") return sum;
     return sum + d.power;
   }, 0);
@@ -88,7 +88,7 @@ const computeHourlyUsage = (devices: Device[]) => {
   }));
 };
 
-export const getEnergyAnalytics = (devices: Device[]): EnergyAnalytics => {
+export const getEnergyAnalytics = (appliances: Appliance[]): EnergyAnalytics => {
   let totalPower = 0;
 
   let totalCurrent = 0;
@@ -97,34 +97,34 @@ export const getEnergyAnalytics = (devices: Device[]): EnergyAnalytics => {
 
   let totalActiveHours = 0;
 
-  let peakPower: Device | null = null;
+  let peakPower: Appliance | null = null;
 
-  let highestDevice: string = "";
+  let highestAppliance: string = "";
 
-  for (const device of devices) {
-    const deviceUsage = calculateKwh(device.power, device.activeHours);
+  for (const appliance of appliances) {
+    const applianceUsage = calculateKwh(appliance.power, appliance.activeHours);
 
-    totalActiveHours += device.activeHours;
+    totalActiveHours += appliance.activeHours;
 
-    totalDailyUsage += deviceUsage;
+    totalDailyUsage += applianceUsage;
     // total power
-    totalPower += device.power;
+    totalPower += appliance.power;
 
     // total current
-    totalCurrent += device.current;
+    totalCurrent += appliance.current;
 
     // peak power
-    if (!peakPower || device.power > peakPower.power) {
-      peakPower = device;
-      highestDevice = peakPower.currentType;
+    if (!peakPower || appliance.power > peakPower.power) {
+      peakPower = appliance;
+      highestAppliance = peakPower.currentType;
     }
   }
 
   // total load in kW
-  const totalDeviceLoadKw = totalPower / 1000;
+  const totalApplianceLoadKw = totalPower / 1000;
 
   // derived calculations
-  const hourlyUsage = computeHourlyUsage(devices);
+  const hourlyUsage = computeHourlyUsage(appliances);
 
   const estimatedCost = calculateDailyCost(totalDailyUsage, settings.tariff);
 
@@ -137,11 +137,11 @@ export const getEnergyAnalytics = (devices: Device[]): EnergyAnalytics => {
 
     totalDailyUsage,
 
-    totalDeviceLoadKw,
+    totalApplianceLoadKw,
 
     totalCurrent,
 
-    highestDevice,
+    highestAppliance,
 
     estimatedCost,
 

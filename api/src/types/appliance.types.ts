@@ -1,11 +1,11 @@
-export type DeviceStatus = "ON" | "OFF";
+export type ApplianceStatus = "ON" | "OFF";
 export type CurrentType = "AC" | "DC";
 
-export interface Device {
+export interface Appliance {
   id: string;
   name: string;
   room: string;
-  status: DeviceStatus;
+  status: ApplianceStatus;
   currentType: CurrentType;
   voltage: number;
   current: number;

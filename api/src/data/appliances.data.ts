@@ -1,6 +1,6 @@
-import type { Device } from "../types/device.types.js";
+import type { Appliance } from "../types/appliance.types.js";
 
-export const devices: Device[] = [
+export const appliances: Appliance[] = [
   {
     id: "fan",
     name: "Smart Fan",

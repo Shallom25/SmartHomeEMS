@@ -1,4 +1,4 @@
-import { devices } from "./devices.data.js";
+import { appliances } from "./appliances.data.js";
 import {
   calculateDailyKwh,
   calculateCost,
@@ -20,8 +20,8 @@ const LIMIT = 2000;
 export function getEnergyData(): Energy {
   const voltage = 220;
 
-  const totalPower = devices.reduce((sum, d) => sum + d.power, 0);
-  const totalCurrent = devices.reduce((sum, d) => sum + d.current, 0);
+  const totalPower = appliances.reduce((sum, d) => sum + d.power, 0);
+  const totalCurrent = appliances.reduce((sum, d) => sum + d.current, 0);
 
   const dailyKwh = calculateDailyKwh(totalPower);
   const cost = calculateCost(dailyKwh, TARIFF);

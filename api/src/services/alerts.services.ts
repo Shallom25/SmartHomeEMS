@@ -1,5 +1,5 @@
 import type { Alert } from "../types/alert.types.js";
-import type { Device } from "../types/device.types.js";
+import type { Appliance } from "../types/appliance.types.js";
 import type { Energy } from "../types/energy.types.js";
 import { settings } from "../data/settings.data.js";
 
@@ -12,21 +12,21 @@ let warning = 0;
 function createAlert(
   title: string,
   message: string,
-  device: string,
+  appliance: string,
   level: AlertLevel
 ): Alert {
   return {
     id: crypto.randomUUID(),
     title,
     message,
-    device,
+    appliance,
     level,
     createdAt: new Date().toISOString(),
   };
 }
 
 export function generateAlerts(
-  devices: Device[],
+  appliances: Appliance[],
   energy: Energy
 ): Alert[] {
   const alerts: Alert[] = [];
@@ -79,25 +79,25 @@ export function generateAlerts(
     );
   }
 
-  // 4. Device-level alerts
-  devices.forEach((device) => {
-    if (device.power > 1000) {
+  // 4. Appliance-level alerts
+  appliances.forEach((appliance) => {
+    if (appliance.power > 1000) {
       alerts.push(
         createAlert(
-          "High Device Consumption",
-          `${device.name} is consuming high power.`,
-          device.name,
+          "High Appliance Consumption",
+          `${appliance.name} is consuming high power.`,
+          appliance.name,
           "warning"
         )
       );
     }
 
-    if (device.status === "OFF" && device.power > 0) {
+    if (appliance.status === "OFF" && appliance.power > 0) {
       alerts.push(
         createAlert(
           "Inconsistent State",
-          `${device.name} is OFF but drawing power.`,
-          device.name,
+          `${appliance.name} is OFF but drawing power.`,
+          appliance.name,
           "danger"
         )
       );

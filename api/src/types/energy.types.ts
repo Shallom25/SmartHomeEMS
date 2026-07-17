@@ -1,4 +1,4 @@
-import { Device } from "./device.types.js";
+import { Appliance } from "./appliance.types.js";
 
 export interface Energy {
   voltage: number;
@@ -35,7 +35,7 @@ export type EnergyAnalytics = {
 
   totalPower: number;
 
-  totalDeviceLoadKw: number;
+  totalApplianceLoadKw: number;
 
   totalCurrent: number;
 
@@ -43,9 +43,9 @@ export type EnergyAnalytics = {
 
   totalDailyUsage: number;
 
-  peakPower: Device | null;
+  peakPower: Appliance | null;
 
-  highestDevice: string;
+  highestAppliance: string;
 
   status: string;
 
