@@ -1,4 +1,3 @@
-import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { EnergyCard } from "@/components/energy/EnergyCard";
 import { Card } from "@/components/ui/Card";
@@ -12,14 +11,14 @@ import {
   formatVoltage,
 } from "@/utils/format";
 import { calculateDailyKwh, calculateCost } from "@/utils/calculations";
-import { useDevicesDetails } from "../hooks/useDevices";
+import { useApplianceDetails } from "../hooks/useDevices";
 
-export function DeviceDetailsScreen() {
-  const { deviceDetails } = useDevicesDetails();
+export function ApplianceDetailsScreen() {
+  const { applianceDetails } = useApplianceDetails();
 
-  const device = deviceDetails;
+  const appliance = applianceDetails;
 
-  if (!device?.id) {
+  if (!appliance?.id) {
     return (
       <View
         style={{
@@ -31,14 +30,14 @@ export function DeviceDetailsScreen() {
         }}
       >
         <Text style={{ color: "#fff", fontSize: 22, fontWeight: "800" }}>
-          Device not found
+          Appliance not found
         </Text>
       </View>
     );
   }
 
   const tariff = 250;
-  const dailyKwh = calculateDailyKwh(device.power);
+  const dailyKwh = calculateDailyKwh(appliance.power);
   const dailyCost = calculateCost(dailyKwh, tariff);
 
   return (
@@ -58,31 +57,31 @@ export function DeviceDetailsScreen() {
               fontWeight: THEME.fontWeight.heavy,
             }}
           >
-            {device.name}
+            {appliance.name}
           </Text>
 
           <Text style={{ color: THEME.colors.textMuted, marginTop: 6 }}>
-            {device.room}
+            {appliance.room}
           </Text>
         </View>
 
         <Badge
-          label={device.status}
-          variant={device.status === "ON" ? "success" : "neutral"}
+          label={appliance.status}
+          variant={appliance.status === "ON" ? "success" : "neutral"}
         />
       </View>
 
       <View style={{ marginTop: 24 }}>
         <EnergyCard
-          label="Device Power"
-          value={formatPower(device.power)}
+          label="Appliance Power"
+          value={formatPower(appliance.power)}
           subtitle="Current simulated load"
         />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
-        <MetricCard label="Voltage" value={formatVoltage(device.voltage)} />
-        <MetricCard label="Current" value={formatCurrent(device.current)} />
+        <MetricCard label="Voltage" value={formatVoltage(appliance.voltage)} />
+        <MetricCard label="Current" value={formatCurrent(appliance.current)} />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
@@ -98,15 +97,15 @@ export function DeviceDetailsScreen() {
             fontWeight: THEME.fontWeight.bold,
           }}
         >
-          Device Insight
+          Appliance Insight
         </Text>
 
         <Text style={{ color: THEME.colors.textSecondary, marginTop: 10 }}>
-          {device.power > 1000
-            ? "This device is using high energy. It should trigger a warning in the alerts module."
-            : device.status === "OFF"
-            ? "This device is currently off and has no active load."
-            : "This device is operating within a normal simulated range."}
+          {appliance.power > 1000
+            ? "This appliance is using high energy. It should trigger a warning in the alerts module."
+            : appliance.status === "OFF"
+            ? "This appliance is currently off and has no active load."
+            : "This appliance is operating within a normal simulated range."}
         </Text>
       </Card>
     </ScrollView>

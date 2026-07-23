@@ -1,12 +1,41 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import axios from "axios";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const useDevices = () => {
+type ApplianceSummary = {
+  id: string;
+  name: string;
+  room: string;
+  status: string;
+  power: number;
+  voltage: number;
+  current: number;
+};
+
+type ApplianceDetails = {
+  id: string;
+  name: string;
+  room: string;
+  status: string;
+  currentType: string;
+  voltage: number;
+  current: number;
+  power: number;
+  activeHours: number;
+  dailyUsage: number;
+  dailyCost: number;
+};
+
+type ApplianceConsumption = {
+  applianceName: string;
+  dailyKwh: number;
+};
+
+const useAppliances = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [devices, setDevices] = useState([
+  const [appliances, setAppliances] = useState<ApplianceSummary[]>([
     {
       id: "",
       name: "",
@@ -18,52 +47,50 @@ const useDevices = () => {
     },
   ]);
 
-  const loadDevices = useCallback(async () => {
+  const loadAppliances = useCallback(async () => {
     try {
       if (!API_URL) {
         return;
       }
 
-      const response = await axios.get(`${API_URL}/devices/connected-devices`);
-      setDevices(response.data);
+      const response = await axios.get(`${API_URL}/appliances/connected-appliances`);
+      setAppliances(response.data);
     } catch (error) {
       console.error("error", error);
     }
   }, []);
 
   useEffect(() => {
-    loadDevices();
-  }, [loadDevices]);
+    loadAppliances();
+  }, [loadAppliances]);
 
-  const activeDevices = devices.filter(
-    (device) => device.status === "ON",
+  const activeAppliances = appliances.filter(
+    (appliance) => appliance.status === "ON",
   ).length;
 
-  const totalPower = devices.reduce((total, device) => {
-    return total + device.power;
+  const totalPower = appliances.reduce((total, appliance) => {
+    return total + appliance.power;
   }, 0);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
-
-    await loadDevices();
-
+    await loadAppliances();
     setRefreshing(false);
-  }, [loadDevices]);
+  }, [loadAppliances]);
 
   return {
-    devices,
-    activeDevices,
+    appliances,
+    activeAppliances,
     totalPower,
-    totalDevices: devices.length,
+    totalAppliances: appliances.length,
     refresh,
     refreshing,
   };
 };
 
-const useDevicesDetails = () => {
+const useApplianceDetails = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [deviceDetails, setDeviceDetails] = useState({
+  const [applianceDetails, setApplianceDetails] = useState<ApplianceDetails>({
     id: "",
     name: "",
     room: "",
@@ -79,81 +106,85 @@ const useDevicesDetails = () => {
 
   const params = useLocalSearchParams();
 
-  const deviceId = Array.isArray(params.deviceId)
-    ? params.deviceId[0]
-    : params.deviceId;
+  const applianceId = Array.isArray(params.applianceId)
+    ? params.applianceId[0]
+    : params.applianceId;
 
-  const loadDeviceDetails = useCallback(async () => {
+  const loadApplianceDetails = useCallback(async () => {
     try {
-      if (!API_URL || !deviceId) {
+      if (!API_URL || !applianceId) {
         return;
       }
 
-      console.log("deviceId:", deviceId);
-
       const response = await axios.get(
-        `${API_URL}/devices/device-details/${deviceId}`,
+        `${API_URL}/appliances/appliance-details/${applianceId}`,
       );
 
-      setDeviceDetails(response.data);
+      setApplianceDetails(response.data);
     } catch (error) {
       console.error("error", error);
     }
-  }, [deviceId]);
+  }, [applianceId]);
 
   useEffect(() => {
-    loadDeviceDetails();
-  }, [loadDeviceDetails]);
+    loadApplianceDetails();
+  }, [loadApplianceDetails]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
-    loadDeviceDetails();
+    await loadApplianceDetails();
     setRefreshing(false);
-  }, [loadDeviceDetails]);
+  }, [loadApplianceDetails]);
+
   return {
-    deviceDetails,
+    applianceDetails,
     refresh,
     refreshing,
   };
 };
 
-const useDevicesConsuption = () => {
+const useApplianceConsumption = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [devicesConsumption, setDevicesConsuption] = useState([
+  const [appliancesConsumption, setAppliancesConsumption] = useState<ApplianceConsumption[]>([
     {
-      deviceName: "",
+      applianceName: "",
       dailyKwh: 0,
     },
   ]);
 
-  const loadDeviceConsumtion = useCallback(async () => {
+  const loadApplianceConsumption = useCallback(async () => {
     try {
       if (!API_URL) {
         return;
       }
 
-      const response = await axios.get(`${API_URL}/devices/device-consumption`);
-      setDevicesConsuption(response.data)
+      const response = await axios.get(`${API_URL}/appliances/appliances-consumption`);
+      setAppliancesConsumption(response.data);
     } catch (error) {
       console.error("error", error);
     }
-  },[]);
+  }, []);
 
-    useEffect(() => {
-    loadDeviceConsumtion();
-  }, [loadDeviceConsumtion]);
+  useEffect(() => {
+    loadApplianceConsumption();
+  }, [loadApplianceConsumption]);
 
   const refresh = useCallback(async () => {
-    setRefreshing(true)
-    loadDeviceConsumtion();
-    setRefreshing(false)
-  },[loadDeviceConsumtion])
+    setRefreshing(true);
+    await loadApplianceConsumption();
+    setRefreshing(false);
+  }, [loadApplianceConsumption]);
 
   return {
-    devicesConsumption,
+    appliancesConsumption,
     refreshing,
-    refresh
+    refresh,
   };
 };
 
-export { useDevices, useDevicesDetails, useDevicesConsuption };
+export { useAppliances, useApplianceDetails, useApplianceConsumption };
+export {
+  useAppliances as useDevices,
+  useApplianceDetails as useDevicesDetails,
+  useApplianceConsumption as useDevicesConsuption,
+};

@@ -5,32 +5,28 @@ import { ConsumptionChart } from "@/components/energy/ComsumptionChart";
 import { THEME } from "@/constants/theme";
 import { formatCurrency, formatKwh, formatPower } from "@/utils/format";
 import { useEnergy } from "../hooks/useEnergy";
-import { useDevicesConsuption } from "@/features/devices/hooks/useDevices";
+import { useApplianceConsumption } from "@/features/devices/hooks/useDevices";
 import { HourlyConsumptionChart } from "@/components/energy/HourlyConsumptionChart";
 
 
 
 export function AnalyticsScreen() {
 
-  const { energy,  refreshing : refreshingEnergy, refresh : refreshEnergy } = useEnergy();
-  const { devicesConsumption, refresh : refreshDevicesConsuption, refreshing : refreshingDevicesConsuption } = useDevicesConsuption()
+  const { energy, refreshing: refreshingEnergy, refresh: refreshEnergy } = useEnergy();
+  const { appliancesConsumption, refresh: refreshApplianceConsumption, refreshing: refreshingApplianceConsumption } = useApplianceConsumption();
 
   
 
 
   const totalKwh = energy.totalDailyUsage;
   const estimatedCost = energy.estimatedCost;
-  const peakDevice = energy.peakPower;
+  const peakAppliance = energy.peakPower;
 
   const refresh = async () => {
-  await Promise.all([
-    refreshEnergy(),
-    refreshDevicesConsuption(),
-  ]);
-};
+    await Promise.all([refreshEnergy(), refreshApplianceConsumption()]);
+  };
 
-const refreshing =
-  refreshingEnergy || refreshingDevicesConsuption;
+  const refreshing = refreshingEnergy || refreshingApplianceConsumption;
 
 
 
@@ -63,17 +59,17 @@ const refreshing =
         <EnergyCard
           label="Total Daily Consumption"
           value={formatKwh(totalKwh)}
-          subtitle="Estimated from simulated device loads"
+          subtitle="Estimated from simulated appliance loads"
         />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
         <MetricCard label="Estimated Cost" value={formatCurrency(estimatedCost)} />
-        <MetricCard label="Peak Load" value={peakDevice.name} />
+        <MetricCard label="Peak Load" value={peakAppliance.name} />
       </View>
 
       <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-        <MetricCard label="Highest Device" value={peakDevice.name} />
+        <MetricCard label="Highest Appliance" value={peakAppliance.name} />
         <MetricCard label="Peak Power" value={formatPower(1200)} />
       </View>
 
@@ -82,7 +78,7 @@ const refreshing =
       </View>
 
       <View style={{ marginTop: 18 }}>
-        <ConsumptionChart title="Device Consumption" data={devicesConsumption} />
+        <ConsumptionChart title="Appliance Consumption" data={appliancesConsumption} />
       </View>
 
       <Card style={{ marginTop: 24 }}>
@@ -103,7 +99,7 @@ const refreshing =
             lineHeight: 22,
           }}
         >
-          The air conditioner is currently the highest consuming device. In a real
+          The air conditioner is currently the highest consuming appliance. In a real
           EMS setup, this would be the first load to optimize for cost reduction.
         </Text>
       </Card>

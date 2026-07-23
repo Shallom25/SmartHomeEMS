@@ -31,7 +31,7 @@ export default function TabsLayout() {
               iconName = "home";
               break;
 
-            case "devices/index":
+            case "appliances/index":
               iconName = "hardware-chip";
               break;
 
@@ -54,7 +54,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />
 
-      <Tabs.Screen name="devices/index" options={{ title: "Devices" }} />
+      <Tabs.Screen name="appliances/index" options={{ title: "Appliances" }} />
 
       <Tabs.Screen name="analytics/index" options={{ title: "Analytics" }} />
 

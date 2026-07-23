@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { THEME } from "@/constants/theme";
 
-type DeviceCardProps = {
+type ApplianceCardProps = {
   name: string;
   room: string;
   status: string;
@@ -13,7 +13,7 @@ type DeviceCardProps = {
   onPress?: () => void;
 };
 
-export function DeviceCard({
+export function ApplianceCard({
   name,
   room,
   status,
@@ -21,7 +21,7 @@ export function DeviceCard({
   voltage,
   current,
   onPress,
-}: DeviceCardProps) {
+}: ApplianceCardProps) {
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={onPress}>
       <Card style={{ marginTop: 14 }}>

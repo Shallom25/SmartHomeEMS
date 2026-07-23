@@ -1,16 +1,13 @@
 import { router } from "expo-router";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { EnergyCard } from "@/components/energy/EnergyCard";
-import { DeviceCard } from "@/components/devices/DeviceCard";
+import { ApplianceCard } from "@/components/appliances/ApplianceCard";
 import { THEME } from "@/constants/theme";
 import { formatCurrent, formatPower, formatVoltage } from "@/utils/format";
-import { useDevices } from "../hooks/useDevices";
+import { useAppliances } from "../hooks/useDevices";
 
-export function DevicesScreen() {
-  const { devices, activeDevices, totalDevices, totalPower,refresh, refreshing } = useDevices();
-
-
-  
+export function AppliancesScreen() {
+  const { appliances, activeAppliances, totalAppliances, totalPower, refresh, refreshing } = useAppliances();
 
   return (
     <ScrollView
@@ -19,9 +16,7 @@ export function DevicesScreen() {
         padding: THEME.layout.containerPadding,
         paddingBottom: 100,
       }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={refresh} />
-            }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
     >
       <Text
         style={{
@@ -30,18 +25,18 @@ export function DevicesScreen() {
           fontWeight: THEME.fontWeight.heavy,
         }}
       >
-        Devices
+        Appliances
       </Text>
 
       <Text style={{ color: THEME.colors.textMuted, marginTop: 6 }}>
-        Monitor simulated smart home loads
+        Monitor smart home appliance loads
       </Text>
 
       <View style={{ marginTop: 24 }}>
         <EnergyCard
-          label="Total Device Load"
+          label="Total Appliance Load"
           value={formatPower(totalPower)}
-          subtitle={`${activeDevices} active devices · ${totalDevices} registered`}
+          subtitle={`${activeAppliances} active appliances · ${totalAppliances} registered`}
         />
       </View>
 
@@ -53,22 +48,22 @@ export function DevicesScreen() {
             fontWeight: THEME.fontWeight.bold,
           }}
         >
-          Connected Devices
+          Connected Appliances
         </Text>
 
-        {devices.map((device) => (
-          <DeviceCard
-            key={device.id}
-            name={device.name}
-            room={device.room}
-            status={device.status}
-            power={formatPower(device.power)}
-            voltage={formatVoltage(device.voltage)}
-            current={formatCurrent(device.current)}
+        {appliances.map((appliance) => (
+          <ApplianceCard
+            key={appliance.id}
+            name={appliance.name}
+            room={appliance.room}
+            status={appliance.status}
+            power={formatPower(appliance.power)}
+            voltage={formatVoltage(appliance.voltage)}
+            current={formatCurrent(appliance.current)}
             onPress={() =>
               router.push({
-                pathname: "/devices/[deviceId]",
-                params: { deviceId: device.id },
+                pathname: "/appliances/[applianceId]" as any,
+                params: { applianceId: appliance.id },
               })
             }
           />

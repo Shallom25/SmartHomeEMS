@@ -54,10 +54,10 @@ export default function RootLayout() {
 
         {/* DETAILS */}
         <Stack.Screen
-          name="devices/[deviceId]"
+          name="appliances/[applianceId]"
           options={{
             headerShown: true,
-            title: "Device Details",
+            title: "Appliance Details",
           }}
         />
       </Stack>
