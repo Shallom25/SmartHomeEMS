@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { THEME } from "@/constants/theme";
 
 type ChartPoint = {
@@ -6,76 +7,147 @@ type ChartPoint = {
   value: number;
 };
 
-type ConsumptionChartProps = {
+type Props = {
   title: string;
   data: ChartPoint[];
+  unit?: string;
+  color?: string;
 };
 
-export function HourlyConsumptionChart({ title, data }: ConsumptionChartProps) {
-  const maxValue = Math.max(...data.map((item) => item.value), 1);
+export function HourlyConsumptionChart({
+  title,
+  data,
+  unit = "kWh",
+  color = THEME.colors.primaryMid,
+}: Props) {
+  const max = Math.max(...data.map(d => d.value), 1);
+
+  const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <View
       style={{
-        backgroundColor: THEME.colors.surface,
-        borderRadius: THEME.radius.lg,
-        padding: THEME.layout.cardPadding,
-        borderWidth: 1,
-        borderColor: THEME.colors.border,
+        backgroundColor: "#1F1F22",
+        borderRadius: 28,
+        overflow: "hidden",
       }}
     >
-      <Text
+      {/* Header */}
+
+      <View
         style={{
-          color: THEME.colors.textPrimary,
-          fontSize: 18,
-          fontWeight: THEME.fontWeight.bold,
+          paddingHorizontal: 20,
+          paddingVertical: 16,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottomWidth: 1,
+          borderColor: "#323236",
         }}
       >
-        {title}
-      </Text>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: 24,
+            fontWeight: "700",
+          }}
+        >
+          {title}
+        </Text>
 
-      <View style={{ marginTop: 18, gap: 12 }}>
-        {data.map((item) => {
-          const width = `${(item.value / maxValue).toFixed(1)}%` as `${string}%`;
+        <Ionicons
+          name="chevron-forward"
+          size={24}
+          color="#A8FF00"
+        />
+      </View>
 
-          return (
-            <View key={item.time}>
+      {/* Body */}
+
+      <View style={{ padding: 20 }}>
+
+        <Text
+          style={{
+            color: "#D0D0D0",
+            fontSize: 18,
+          }}
+        >
+          Today
+        </Text>
+
+        <Text
+          style={{
+            color,
+            fontSize: 42,
+            fontWeight: "800",
+            marginTop: 2,
+          }}
+        >
+          {total.toFixed(1)}
+          <Text
+            style={{
+              fontSize: 24,
+            }}
+          >
+            {unit}
+          </Text>
+        </Text>
+
+        {/* Graph */}
+
+        <View
+          style={{
+            height: 180,
+            marginTop: 24,
+            flexDirection: "row",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          {data.map(item => {
+            const height = (item.value / max) * 150;
+
+            return (
               <View
+                key={item.time}
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 6,
-                }}
-              >
-                <Text style={{ color: THEME.colors.textSecondary }}>
-                  {item.time}
-                </Text>
-
-                <Text style={{ color: THEME.colors.textPrimary, fontWeight: "700" }}>
-                  {item.value} kWh
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  height: 10,
-                  backgroundColor: THEME.colors.surfaceSoft,
-                  borderRadius: THEME.radius.full,
-                  overflow: "hidden",
+                  alignItems: "center",
+                  flex: 1,
                 }}
               >
                 <View
                   style={{
-                    width: width as any,
-                    height: "100%",
-                    backgroundColor: THEME.colors.primaryMid,
-                    borderRadius: THEME.radius.full,
+                    width: 3,
+                    height: 150,
+                    backgroundColor: "#4A4A4A",
+                    position: "absolute",
+                    bottom: 20,
+                    borderRadius: 999,
                   }}
                 />
+
+                <View
+                  style={{
+                    width: 5,
+                    height,
+                    backgroundColor: color,
+                    borderRadius: 999,
+                    marginBottom: 20,
+                  }}
+                />
+
+                <Text
+                  style={{
+                    color: "#8F8F92",
+                    fontSize: 11,
+                  }}
+                >
+                  {item.time}
+                </Text>
               </View>
-            </View>
-          );
-        })}
+            );
+          })}
+        </View>
       </View>
     </View>
   );

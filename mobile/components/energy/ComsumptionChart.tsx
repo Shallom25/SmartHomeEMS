@@ -1,81 +1,143 @@
-import { Text, View } from "react-native";
-import { THEME } from "@/constants/theme";
+import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type ChartPoint = {
   applianceName: string;
   dailyKwh: number;
 };
 
-type ConsumptionChartProps = {
+type Props = {
   title: string;
   data: ChartPoint[];
 };
 
-export function ConsumptionChart({ title, data }: ConsumptionChartProps) {
-  const maxValue = Math.max(...data.map((item) => item.dailyKwh), 1);
+export function ConsumptionChart({ title, data }: Props) {
+  const max = Math.max(...data.map(i => i.dailyKwh), 1);
+
+  const total = data.reduce((sum, i) => sum + i.dailyKwh, 0);
 
   return (
     <View
       style={{
-        backgroundColor: THEME.colors.surface,
-        borderRadius: THEME.radius.lg,
-        padding: THEME.layout.cardPadding,
-        borderWidth: 1,
-        borderColor: THEME.colors.border,
+        backgroundColor: "#1F1F22",
+        borderRadius: 28,
+        overflow: "hidden",
       }}
     >
-      <Text
+      {/* Header */}
+
+      <View
         style={{
-          color: THEME.colors.textPrimary,
-          fontSize: 18,
-          fontWeight: THEME.fontWeight.bold,
+          padding: 20,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottomWidth: 1,
+          borderColor: "#34343A",
         }}
       >
-        {title}
-      </Text>
+        <Text
+          style={{
+            color: "white",
+            fontWeight: "700",
+            fontSize: 24,
+          }}
+        >
+          {title}
+        </Text>
 
-      <View style={{ marginTop: 18, gap: 12 }}>
-        {data.map((item) => {
-          const width = `${(item.dailyKwh / maxValue).toFixed(1)}%`;
+        <Ionicons
+          name="chevron-forward"
+          size={22}
+          color="#A8FF00"
+        />
+      </View>
 
-          return (
-            <View key={item.applianceName}>
+      <View style={{ padding: 20 }}>
+
+        <Text
+          style={{
+            color: "#D0D0D0",
+            fontSize: 18,
+          }}
+        >
+          Today
+        </Text>
+
+        <Text
+          style={{
+            color: "#2EA8FF",
+            fontSize: 40,
+            fontWeight: "800",
+            marginBottom: 24,
+          }}
+        >
+          {total.toFixed(1)}
+          <Text style={{ fontSize: 22 }}>kWh</Text>
+        </Text>
+
+        {/* Chart */}
+
+        <View
+          style={{
+            height: 170,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+          }}
+        >
+          {data.map(item => {
+            const height = (item.dailyKwh / max) * 140;
+
+            return (
               <View
+                key={item.applianceName}
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginBottom: 6,
+                  flex: 1,
+                  alignItems: "center",
                 }}
               >
-                <Text style={{ color: THEME.colors.textSecondary }}>
-                  {item.applianceName}
-                </Text>
+                {/* background line */}
 
-                <Text style={{ color: THEME.colors.textPrimary, fontWeight: "700" }}>
-                  {item.dailyKwh} kWh
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  height: 10,
-                  backgroundColor: THEME.colors.surfaceSoft,
-                  borderRadius: THEME.radius.full,
-                  overflow: "hidden",
-                }}
-              >
                 <View
                   style={{
-                    width: width as any,
-                    height: "100%",
-                    backgroundColor: THEME.colors.primaryMid,
-                    borderRadius: THEME.radius.full,
+                    position: "absolute",
+                    bottom: 20,
+                    width: 3,
+                    height: 140,
+                    backgroundColor: "#47474D",
+                    borderRadius: 999,
                   }}
                 />
+
+                {/* value */}
+
+                <View
+                  style={{
+                    width: 6,
+                    height,
+                    backgroundColor: "#2EA8FF",
+                    borderRadius: 999,
+                    marginBottom: 20,
+                  }}
+                />
+
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: 10,
+                    width: 36,
+                    textAlign: "center",
+                  }}
+                >
+                  {item.applianceName.slice(0, 3)}
+                </Text>
               </View>
-            </View>
-          );
-        })}
+            );
+          })}
+        </View>
+
       </View>
     </View>
   );

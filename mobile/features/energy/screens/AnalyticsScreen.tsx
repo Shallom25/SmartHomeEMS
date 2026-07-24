@@ -74,7 +74,11 @@ export function AnalyticsScreen() {
       </View>
 
       <View style={{ marginTop: 24 }}>
-        <HourlyConsumptionChart title="Hourly Usage" data={energy.hourlyUsage} />
+        <HourlyConsumptionChart
+    title="Hourly Usage"
+    data={energy.hourlyUsage}
+    color="#2EA8FF"
+/>
       </View>
 
       <View style={{ marginTop: 18 }}>
