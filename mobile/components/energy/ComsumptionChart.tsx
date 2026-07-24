@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { THEME } from "@/constants/theme";
 
 type ChartPoint = {
   applianceName: string;
@@ -19,7 +20,7 @@ export function ConsumptionChart({ title, data }: Props) {
   return (
     <View
       style={{
-        backgroundColor: "#1F1F22",
+        backgroundColor: THEME.colors.surface,
         borderRadius: 28,
         overflow: "hidden",
       }}
@@ -33,7 +34,7 @@ export function ConsumptionChart({ title, data }: Props) {
           justifyContent: "space-between",
           alignItems: "center",
           borderBottomWidth: 1,
-          borderColor: "#34343A",
+          borderColor: THEME.colors.textPrimary,
         }}
       >
         <Text
@@ -118,7 +119,7 @@ export function ConsumptionChart({ title, data }: Props) {
                     height,
                     backgroundColor: "#2EA8FF",
                     borderRadius: 999,
-                    marginBottom: 20,
+                    marginBottom: 5,
                   }}
                 />
 

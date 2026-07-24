@@ -27,7 +27,7 @@ export function HourlyConsumptionChart({
   return (
     <View
       style={{
-        backgroundColor: "#1F1F22",
+        backgroundColor: THEME.colors.surface,
         borderRadius: 28,
         overflow: "hidden",
       }}
@@ -132,7 +132,7 @@ export function HourlyConsumptionChart({
                     height,
                     backgroundColor: color,
                     borderRadius: 999,
-                    marginBottom: 20,
+                    marginBottom: 5,
                   }}
                 />
 
