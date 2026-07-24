@@ -70,7 +70,7 @@ const LoginScreen = () => {
                 textTransform: "uppercase",
               }}
             >
-              Smart EMS
+              SmartHome EMS
             </Text>
 
             <Text

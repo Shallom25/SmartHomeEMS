@@ -74,7 +74,7 @@ const ForgotPasswordScreen = () => {
                 textTransform: "uppercase",
               }}
             >
-              Smart EMS
+              SmartHome EMS
             </Text>
 
             <Text
