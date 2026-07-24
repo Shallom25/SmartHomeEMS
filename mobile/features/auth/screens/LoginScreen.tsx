@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useLogin } from "../hooks/useAuth";
+import { useAuth } from "../hooks/authContext";
 import { THEME } from "@/constants/theme";
 
 const LoginScreen = () => {
-  const { login  } = useLogin()
+    const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

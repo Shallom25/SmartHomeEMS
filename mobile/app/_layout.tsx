@@ -1,44 +1,29 @@
-import { Stack, useRouter, useSegments } from "expo-router";
-import { useVerifyToken } from "@/features/auth/hooks/useAuth";
+import { Stack, Redirect, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { AuthProvider, useAuth  } from "@/features/auth/hooks/authContext";
 
-
-
-export default function RootLayout() {
-  console.log("RootLayout rendered");
-  const { user, loading } = useVerifyToken();
+function RootLayoutNav() {
+  const { user, loading } = useAuth();
   const segments = useSegments();
-  const router = useRouter();
-  const [isReady, setIsReady] = useState(false);
 
-  console.log(user)
-  console.log(loading)
-  
-
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
-
-  useEffect(() => {
-  if (!isReady || loading) return;
+  // don't decide anything until we know if there's a logged-in user
+  if (loading) {
+    return null; // or a splash/loading screen component
+  }
 
   const inAuth = segments[0] === "(auth)";
 
   if (!user && !inAuth) {
-    router.replace("/(auth)/login");
+    return <Redirect href="/(auth)/login" />;
   }
 
   if (user && inAuth) {
-    router.replace("/(tabs)");
+    return <Redirect href="/(tabs)" />;
   }
-}, [isReady, loading, user, segments, router]);
-
 
   return (
     <>
       <StatusBar style="light" />
-
       <Stack
         screenOptions={{
           headerShown: false,
@@ -46,21 +31,21 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: "#050816" },
         }}
       >
-        {/* AUTH FLOW */}
         <Stack.Screen name="(auth)" />
-
-        {/* MAIN APP */}
         <Stack.Screen name="(tabs)" />
-
-        {/* DETAILS */}
         <Stack.Screen
           name="appliances/[applianceId]"
-          options={{
-            headerShown: true,
-            title: "Appliance Details",
-          }}
+          options={{ headerShown: true, title: "Appliance Details" }}
         />
       </Stack>
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }

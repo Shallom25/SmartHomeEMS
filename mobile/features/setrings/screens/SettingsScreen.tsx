@@ -11,12 +11,14 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { THEME } from "@/constants/theme";
 import { useSettings, useUpdateSettings } from "../hooks/useSettings";
+import { useAuth } from "@/features/auth/hooks/authContext";
 import { useState } from "react";
 
 export function SettingsScreen() {
   const { settings, refresh, refreshing } = useSettings();
   const [localSettings, setLocalSettings] = useState(settings);
   const { patchSettings  } = useUpdateSettings(localSettings);
+  const { logout } = useAuth()
 
   const [simulationMode, setSimulationMode] = useState(settings.simulationMode);
 
@@ -163,6 +165,14 @@ export function SettingsScreen() {
           onPress={patchSettings}
         >
           Save Settings
+        </Button>
+      </View>
+            <View style={{ marginTop: 12 }}>
+        <Button
+          onPress={logout}
+          style={{ backgroundColor: THEME.colors.surfaceSoft }}
+        >
+          Log Out
         </Button>
       </View>
     </ScrollView>

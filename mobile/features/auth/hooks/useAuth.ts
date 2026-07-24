@@ -10,6 +10,11 @@ type User = {
   email: string;
 };
 
+
+const useLogout = async () => {
+  await AsyncStorage.removeItem("token");
+};
+
 const useLogin = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
@@ -154,4 +159,4 @@ const useVerifyToken = () => {
   };
 };
 
-export { useLogin, useRegister, useForgotPassword, useVerifyToken };
+export { useLogin, useRegister, useForgotPassword, useVerifyToken, useLogout };
